@@ -1,0 +1,71 @@
+variables:
+  CI_DEBUG_TRACE: "false"
+  CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG.$CI_PIPELINE_ID
+
+stages:
+  - build
+  - release
+  - deploy
+
+build:
+  stage: build
+  image: fleek/create-react-app:latest
+  script:
+    - if [[ "$CI_COMMIT_TAG" =~ ^[1-9].* ]]; then export REACT_APP_BASE_URL="${BASE_URL_PROD}"; else export REACT_APP_BASE_URL="${BASE_URL_TEST}"; fi
+    - export SKIP_PREFLIGHT_CHECK=true
+    - export CI=false
+    - npm install
+    - npm run build
+    
+  artifacts:
+    expire_in: 3 hours
+    paths:
+      - build/
+  only:
+    - tags
+
+release:
+  image: docker:19.03.12
+  stage: release
+  services:
+    - docker:19.03.12-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build -t $CONTAINER_IMAGE .
+    - docker push $CONTAINER_IMAGE
+
+
+  only:
+    - tags
+
+deploy_staging:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [ "" ]
+
+  before_script:
+    - if [[ "${CI_COMMIT_TAG}" =~ ^[0]\.[0-9]*\.[A-Za-z0-9]*$ ]]; then export K8S_NAMESPACE="${NAMESPACE_DEV}"; elif [[ "${CI_COMMIT_TAG}" =~ ^[1]\.[0-9]*\.[A-Za-z0-9]*$ ]]; then export K8S_NAMESPACE="${NAMESPACE_PROD}"; else echo "Wrong tag"; fi
+    - if [[ "${CI_COMMIT_TAG}" =~ ^[0]\.[0-9]*\.[A-Za-z0-9]*$ ]]; then export K8S_CI_TOKEN="${K8S_CI_TOKEN_DEV}"; elif [[ "${CI_COMMIT_TAG}" =~ ^[1]\.[0-9]*\.[A-Za-z0-9]*$ ]]; then export K8S_CI_TOKEN="${K8S_CI_TOKEN_PROD}"; else echo "Wrong tag"; fi
+    - cat > /tmp/kubeconfig
+    - export KUBECONFIG=/tmp/kubeconfig
+    - kubectl config set-cluster k8s --insecure-skip-tls-verify=true --server=${KUBE_API}
+    - kubectl config set-credentials ci --token="$(echo ${K8S_CI_TOKEN} | base64 -d)"
+    - kubectl config set-context ci --cluster=k8s --user=ci --namespace ${K8S_NAMESPACE}
+    - kubectl config use-context ci
+
+  script:
+    - if [[ "${CI_COMMIT_TAG}" =~ ^[0]\.[0-9]*\.[A-Za-z0-9]*$ ]]; then export CHART_NAME="${CHART_NAME_TEST}"; export CONFIG_MAP="${CONFIG_MAP_TEST}"; export HOST_ADDR="${HOST_ADDR_TEST}"; elif [[ "${CI_COMMIT_TAG}" =~ ^[1]\.[0-9]*\.[A-Za-z0-9]*$ ]]; then export CHART_NAME="${CHART_NAME_PROD}"; export CONFIG_MAP="${CONFIG_MAP_PROD}";export HOST_ADDR="${HOST_ADDR_PROD}";else echo "Wrong tag"; fi
+    - sed -i -e "s,<K8S_NAMESPACE>,$K8S_NAMESPACE,g; s,<HOST_ADDR>,$HOST_ADDR,g; s,<CHART_NAME>,$CHART_NAME,g" .kube/1tls.yaml
+    - sed -i -e "s,<IMAGE>,$CONTAINER_IMAGE,g; s,<CHART_NAME>,$CHART_NAME,g; s,<CONFIG_MAP>, $CONFIG_MAP,g" .kube/deployment.yaml
+    - sed -i -e "s,<HOST_ADDR>,$HOST_ADDR,g; s,<CHART_NAME>,$CHART_NAME,g" .kube/ingress.yaml
+    - sed -i -e "s,<CHART_NAME>,$CHART_NAME,g" .kube/service.yaml
+    - cat .kube/deployment.yaml
+    - kubectl apply -f .kube
+    - kubectl -n ${K8S_NAMESPACE} rollout status deployment/$CHART_NAME || (kubectl -n ${K8S_NAMESPACE} rollout undo deployment/$CHART_NAME && exit 1)
+  only:
+    - tags

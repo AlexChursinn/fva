@@ -1,0 +1,81 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1440px;
+  padding: 20px 40px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin: 0 0 40px;
+}
+
+.header img {
+  height: 50px;
+  cursor: pointer;
+}
+
+/* Стили для переключателя языка с высокой специфичностью */
+.header .languageSwitcher button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.header .languageSwitcher button:hover {
+  color: #9FD181 !important; /* Применяем светло-зеленый цвет при наведении */
+}
+
+/* Стили для кнопки "Открыть счет" */
+.openAccountButton {
+  background-color: #9FD181;
+  transition: background-color 0.3s ease, font-size 0.3s ease;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.openAccountButton:hover {
+  background-color: rgba(159, 209, 129, 0.5);
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .header img {
+    margin-bottom: 10px;
+  }
+
+  .languageSwitcher {
+    order: 1;
+    margin-bottom: 10px;
+  }
+
+  .openAccountButton {
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .openAccountButton {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,94 @@
+/* Features.module.css */
+.features {
+  display: flex;
+  justify-content: center; /* Центрируем карточки по горизонтали */
+  align-items: center; /* Центрируем карточки по вертикали */
+  gap: 40px; /* Отступ между карточками */
+  padding: 40px; /* Внешний отступ у контейнера */
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+  flex-wrap: wrap; /* Для переносов на маленьких экранах */
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Центрируем содержимое внутри карточек */
+  gap: 16px;
+  width: 30%; /* Карточки занимают 30% ширины на больших экранах */
+  text-align: center; /* Текст по центру */
+  padding: 20px; /* Внутренний отступ у карточек */
+  border-radius: 8px; /* Скругленные углы */
+  background-color: #f8f9fa;
+  margin-bottom: 20px; /* Отступ между карточками */
+}
+
+.feature img {
+  width: 50px;
+  height: 50px;
+}
+
+.feature p {
+  font-size: 18px;
+  color: #343a40; /* Цвет текста */
+}
+
+/* Адаптивные стили для планшетов */
+@media (max-width: 1024px) {
+  .features {
+    flex-direction: column; /* Карточки в столбик */
+    align-items: center;
+    padding: 30px; /* Увеличенные отступы у контейнера */
+    gap: 30px;
+  }
+
+  .feature {
+    width: 80%; /* Карточки занимают 80% ширины */
+    justify-content: flex-start; /* Текст выравниваем влево */
+  }
+
+  .feature img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .feature p {
+    font-size: 16px;
+  }
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+  .features {
+    padding: 20px; /* Внешний отступ у контейнера */
+    gap: 20px;
+  }
+
+  .feature {
+    width: 100%; /* Карточки занимают всю ширину */
+    padding: 15px; /* Внутренний отступ у карточек */
+    margin-bottom: 15px; /* Отступ между карточками */
+  }
+
+  .feature:last-child {
+    margin-bottom: 0; /* Убираем отступ у последней карточки */
+  }
+
+  .feature p {
+    font-size: 14px;
+  }
+
+  .feature img {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Для самых маленьких экранов */
+@media (max-width: 480px) {
+  .features {
+    padding: 15px; /* Отступы на маленьких экранах */
+  }
+}

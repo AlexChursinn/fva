@@ -1,0 +1,61 @@
+/* InfoBlock.module.css */
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e9ecef;
+  padding: 40px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.info h2 {
+  font-size: 36px;
+  color: #343a40;
+}
+
+.info p {
+  font-size: 18px;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.info img {
+  max-width: 800px; /* Увеличенная максимальная ширина */
+  width: 50%; /* Изображение занимает 50% ширины */
+}
+
+/* Адаптивные стили */
+@media (max-width: 1024px) {
+  .info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info img {
+    width: 80%; /* Изображение растягивается на 80% */
+    margin-top: 20px;
+  }
+
+  .info h2 {
+    font-size: 30px;
+  }
+
+  .info p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .info img {
+    width: 100%; /* На мобильных изображение занимает всю ширину */
+  }
+
+  .info h2 {
+    font-size: 24px;
+  }
+
+  .info p {
+    font-size: 14px;
+  }
+}

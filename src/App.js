@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useRef } from "react";
+import { Features } from "./components/Features/Features";
+import { Footer } from "./components/Footer/Footer";
+import { FormBlock } from "./components/FormBlock/FormBlock";
+import { Header } from "./components/Header/Header";
+import { InfoBlock } from "./components/InfoBlock/InfoBlock";
+import { Main } from "./components/Main/Main";
+import styles from "./App.module.css";
 
 function App() {
+  const formRef = useRef(null); // Создаем реф
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.container}>
+      <Header scrollToForm={scrollToForm} /> {/* Прокидываем функцию скролла */}
+      <Main />
+      <Features />
+      <InfoBlock />
+      <FormBlock formRef={formRef} /> {/* Прокидываем реф */}
+      <Footer />
     </div>
   );
 }

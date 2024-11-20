@@ -25,14 +25,14 @@ export const Footer = () => {
           {t('address')}
         </a>
         <a href="tel:+996772006096">{t('phone')}</a>
-        <a href="mailto:info@fva-finance.kg">{t('email')}</a>
+        <a href="mailto:fvafinans@gmail.com">{t('email')}</a>
       </div>
 
       <div className={`${styles.footerSection} ${styles.documents}`}>
         <h3>{t('documents')}</h3>
-        <a href="/offer.pdf" target="_blank" rel="noopener noreferrer">
+{/*         <a href="/terms.pdf" target="_blank" rel="noopener noreferrer">
           {t('offer')}
-        </a>
+        </a> */}
         <a href="/policy.pdf" target="_blank" rel="noopener noreferrer">
           {t('policy')}
         </a>

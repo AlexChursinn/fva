@@ -108,7 +108,7 @@ export const FormBlock = ({ formRef }) => {
             }}
           >
             <a
-              href="/path/to/your/document.pdf"
+              href="/terms.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.link}
